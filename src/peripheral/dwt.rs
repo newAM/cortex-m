@@ -56,9 +56,9 @@ bitfield! {
     #[repr(C)]
     #[derive(Copy, Clone)]
     pub struct Ctrl(u32);
-    get_cyccntena, set_cyccntena: 0;
-    get_pcsamplena, set_pcsamplena: 12;
-    get_exctrcena, set_exctrcena: 16;
+    cyccntena, set_cyccntena: 0;
+    pcsamplena, set_pcsamplena: 12;
+    exctrcena, set_exctrcena: 16;
 }
 
 /// Comparator
@@ -78,11 +78,11 @@ bitfield! {
     #[derive(Copy, Clone)]
     /// Comparator FUNCTIONn register.
     pub struct Function(u32);
-    u8, get_function, set_function: 3, 0;
-    get_emitrange, set_emitrange: 5;
-    get_cycmatch, set_cycmatch: 7;
-    get_datavmatch, set_datavmatch: 8;
-    get_matched, _: 24;
+    u8, function, set_function: 3, 0;
+    emitrange, set_emitrange: 5;
+    cycmatch, set_cycmatch: 7;
+    datavmatch, set_datavmatch: 8;
+    matched, _: 24;
 }
 
 // DWT CTRL register fields
@@ -91,7 +91,6 @@ const NOTRCPKT: u32 = 1 << 27;
 const NOEXTTRIG: u32 = 1 << 26;
 const NOCYCCNT: u32 = 1 << 25;
 const NOPRFCNT: u32 = 1 << 24;
-const CYCCNTENA: u32 = 1 << 0;
 
 impl DWT {
     /// Number of comparators implemented
@@ -195,7 +194,7 @@ impl DWT {
     #[inline]
     pub fn cycle_counter_enabled() -> bool {
         // NOTE(unsafe) atomic read with no side effects
-        unsafe { (*Self::ptr()).ctrl.read().0 & CYCCNTENA != 0 }
+        unsafe { (*Self::ptr()).ctrl.read().cyccntena() }
     }
 
     /// Returns the current clock cycle count
